@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,100&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.component-transition-enter {
+  @apply opacity-0
+}
+.component-transition-enter-active {
+  @apply opacity-100 duration-300
+}
+.component-transition-exit {
+  @apply hidden
+}
+   
+.component-transition-active {
+  @apply opacity-0  
+  }
+
+
