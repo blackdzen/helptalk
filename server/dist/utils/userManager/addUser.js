@@ -9,12 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import bcrypt from "bcrypt";
 import User from "../../models/user.js";
-import UserData from "./userData.js";
+import UserData from "./UserData.js";
 //Function adds new user to Mongo data base and return result message
 function addUser() {
-    return new Promise((resolve) => {
+    return __awaiter(this, void 0, void 0, function* () {
         const userData = new UserData();
-        userData
+        yield userData
             .setUsername()
             .then(() => userData.setName())
             .then(() => userData.setPassword())
@@ -28,11 +28,11 @@ function addUser() {
                     passwordHash,
                 });
                 if (yield User.findOne({ username })) {
-                    resolve(`Username: ${username} exist in data base. Username must be unique.`);
+                    console.log(`Username: ${username} exist in data base. Username must be unique.`);
                 }
                 else {
                     yield user.save().then(() => {
-                        resolve(`User: ${username} saved successfull.`);
+                        console.log(`User: ${username} saved successfull.`);
                     });
                 }
             }
