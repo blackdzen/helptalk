@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import bcrypt from "bcrypt";
 import User from "../../models/user.js";
 import UserData from "./UserData.js";
-//Function adds new user to Mongo data base and return result message
+//Function adds a new user to the database and returns a resulting message as output to the console.
 function addUser() {
     return __awaiter(this, void 0, void 0, function* () {
         const userData = new UserData();

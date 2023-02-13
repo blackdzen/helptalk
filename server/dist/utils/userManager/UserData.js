@@ -9,16 +9,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import readline from "readline";
 import inputChecker from "./inputChecker.js";
+// The class accepts user input from the console, checks the input, saves the input for a future user creation in the database.
 class UserData {
     constructor() {
         this.username = null;
         this.name = null;
         this.password = null;
     }
+    // The function accepts user input from the console, checks it and sets it as a username.
     setUsername() {
         return __awaiter(this, void 0, void 0, function* () {
             while (true) {
-                const response = yield this.getData("Enter a username: ");
+                const response = yield this.getData("Enter a username. The username must be unique: ");
                 if (inputChecker.isExist(response) &&
                     inputChecker.isInOneWord(response)) {
                     this.username = response.trim();
@@ -30,6 +32,7 @@ class UserData {
             }
         });
     }
+    // The function accepts user input from the console, checks it and sets it as a name.
     setName() {
         return __awaiter(this, void 0, void 0, function* () {
             while (true) {
@@ -45,6 +48,7 @@ class UserData {
             }
         });
     }
+    // The function accepts user input from the console, checks it and sets it as a password.
     setPassword() {
         return __awaiter(this, void 0, void 0, function* () {
             while (true) {
@@ -60,7 +64,7 @@ class UserData {
             }
         });
     }
-    //Return object with user data
+    //The function returns the object with a user data for a future user creation in the database.
     getUserData() {
         return {
             username: this.username,
@@ -68,7 +72,7 @@ class UserData {
             password: this.password,
         };
     }
-    // Get user input from console
+    // The function accepts user input from the console and returns a string with user input.
     getData(question) {
         const rl = readline.createInterface({
             input: process.stdin,

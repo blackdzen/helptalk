@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import addUser from "./addUser.js";
 import removeUser from "./removeUser.js";
 import readline from "readline";
+// The main script accepts user input and interprets it by adding or removing the user from the database.
 const { log, error } = console;
 mongoose.set("strictQuery", false);
 try {

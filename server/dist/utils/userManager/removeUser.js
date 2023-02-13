@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import User from "../../models/user.js";
 import UserData from "./UserData.js";
+//Function removes a user from the database and returns a resulting message as output to the console.
 function removeUser() {
     return __awaiter(this, void 0, void 0, function* () {
         const userData = new UserData();
