@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import User from "../../models/user.js";
 import UserData from "./UserData.js";
 
-//Function adds new user to Mongo data base and return result message
+//Function adds a new user to the database and returns a resulting message as output to the console.
 async function addUser() {
   const userData = new UserData();
   await userData

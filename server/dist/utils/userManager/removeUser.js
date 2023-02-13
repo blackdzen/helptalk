@@ -14,12 +14,11 @@ function removeUser() {
         const userData = new UserData();
         yield userData.setUsername().then(() => __awaiter(this, void 0, void 0, function* () {
             const { username } = userData.getUserData();
-            console.log(`Username: ${username}`);
             const response = yield User.deleteOne({ username });
-            console.log(`Response: ${response}`);
-            const { acknowledged, deletedCount } = response;
-            console.log(`acknowledged -> ${acknowledged} deletedCount -> ${deletedCount}`);
-            return response;
+            const { deletedCount } = response;
+            console.log(deletedCount === 1
+                ? `User: ${username} deleted from data base`
+                : `User: ${username} doesn't exist in data base`);
         }));
     });
 }
