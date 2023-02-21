@@ -1,13 +1,16 @@
 interface IButton {
-  id: string,
-  label: string,
-  onClick: () => void,
-  bgColor?: string,
-  borderColor?: string,
-  textColor?: string,
-  hoverTextColor?: string,
-  hoverBorderColor?: string,
-  hoverBgColor?: string,
+  id: string;
+  label: string;
+  onClick: () => void;
+  bgColor?: string;
+  borderColor?: string;
+  textColor?: string;
+  hoverTextColor?: string;
+  hoverBorderColor?: string;
+  hoverBgColor?: string;
+  focusTextColor?: string;
+  focusBorderColor?: string;
+  focusBgColor?: string;
 }
 
-export default IButton
+export default IButton;

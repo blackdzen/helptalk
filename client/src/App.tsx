@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Button from "./Components/Button";
 import Checkbox from "./Components/Checkbox";
 import CommentField from "./Components/CommentField";
@@ -11,8 +11,12 @@ import { CSSTransition } from "react-transition-group";
 import { RiNumber1, RiNumber2, RiNumber3 } from "react-icons/ri";
 import Login from "./Components/Login";
 import Server from "./Utils/Server";
+import IToken from "./Interfaces/IToken";
 
 function App() {
+  //The object to communicate with the backend part of application.
+  const server = new Server("http://83.222.8.84:3005");
+
   //Node references for CSSTransition components
   const commentRef = useRef(null);
   const closeRef = useRef(null);
@@ -29,9 +33,10 @@ function App() {
   const [isDepartureButtonOpen, setIsDepartureButtonOpen] =
     useState<boolean>(true);
   const [isCopyMessageOpen, setIsCopyMessageOpen] = useState<boolean>(false);
-  const [isFormOpen, setIsFormOpen] = useState<boolean>(true);
+  const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
+  const [isLoginOpen, setIsLoginOpen] = useState<boolean>(true);
 
-  //These are states for checboxes define was checbox checked or not
+  //These are states for checboxes define was checkbox checked or not
   const [isSels, setIsSels] = useState<boolean>(false);
   const [isCall, setIsCall] = useState<boolean>(false);
   const [isOrganize, setIsOrganize] = useState<boolean>(false);
@@ -45,14 +50,12 @@ function App() {
   // These are the states that store data for the future comment for Argus:
   const [operatorComment, setOperatorComment] = useState<string>("");
 
-  // const [fault, setFault] = useState<string>('')
   const [sels, setSels] = useState<string>("");
   const [call, setCall] = useState<string>("");
   const [organize, setOrganize] = useState<string>("");
 
   const [requestSubject, setRequestSubject] = useState<string>("");
   const [mainDevice, setMainDevice] = useState<string>("");
-  // const [optionalDevice, setOptionalDevice] = useState<string>('')
   const [stb, setStb] = useState<string>("");
   const [optionalService, setOptionalService] = useState<string>("");
   const [sms, setSms] = useState<string>("Да");
@@ -107,7 +110,7 @@ function App() {
 
   const clearButtonClick = () => toDefault();
 
-  // Func resets values form to default state
+  // The function resets states to default values
   function toDefault() {
     setIsDepartureOpen(false);
     setIsCloseOpen(false);
@@ -115,7 +118,6 @@ function App() {
     setIsCloseButtonOpen(true);
     setIsDepartureButtonOpen(true);
     setOperatorComment("");
-    // setFault('')
     setSels("");
     setIsSels(false);
     setIsCall(false);
@@ -125,18 +127,20 @@ function App() {
     setOrganize("");
     setRequestSubject("");
     setMainDevice("");
-    // setOptionalDevice('')
     setStb("");
     setOptionalService("");
     setSms("Да");
   }
 
-  const server = new Server("http://83.222.8.84:3005");
-  server.login("1", "2");
-
   return (
     <div className="App">
-      {/* <Login setIsFormOpen={setIsFormOpen} /> */}
+      {isLoginOpen && (
+        <Login
+          server={server}
+          setIsFormOpen={setIsFormOpen}
+          setIsLoginOpen={setIsLoginOpen}
+        />
+      )}
       <CSSTransition
         nodeRef={formRef}
         in={isFormOpen}
@@ -241,13 +245,6 @@ function App() {
                 defaultValue={mainDevice}
                 isFocus={setIsOptionsFocused}
               />
-              {/* <DropDownList */}
-              {/*   options={options.optionalDevices} */}
-              {/*   setState={setOptionalDevice} */}
-              {/*   label='Дополнительное устройcтво' */}
-              {/*   defaultValue={optionalDevice} */}
-              {/*   isFocus={setIsOptionsFocused} */}
-              {/* /> */}
               <DropDownList
                 options={options.stb}
                 setState={setStb}

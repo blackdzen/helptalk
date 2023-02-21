@@ -4,7 +4,7 @@
   "description": "Web application for rapid creating comments.",
   "main": "index.js",
   "scripts": {
-    "test": "cd ./client/; npx react-scripts start; cd.."
+    "client": "cd ./client/; npx react-scripts start; cd.."
   },
   "keywords": [
     "comment",

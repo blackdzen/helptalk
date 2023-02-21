@@ -5,7 +5,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "start": "node dist/index.js",
+    "server": "node dist/index.js",
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand --forceExit",
     "watch": "nodemon ./dist/app.js NODE_ENV=test",
     "manager": "node dist/utils/userManager/main.js"

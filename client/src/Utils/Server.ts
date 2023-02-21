@@ -1,20 +1,28 @@
-import axios from "axios"
-import IServer from "../Interfaces/IServer"
+import axios from "axios";
+import IServer from "../Interfaces/IServer";
 
 class Server implements IServer {
-  link: string
+  link: string;
 
   constructor(link: string) {
-    this.link = link
+    this.link = link;
   }
 
   async login(username: string, password: string) {
-    axios.post(`${this.link}/api/login`, { username, password })
-      .then(response => {
-        console.log(response)
-      })
-    return 'hui`'
+    const apiLogin = `${this.link}/api/login`;
+    let token = null;
+    try {
+      const response = await axios.post(apiLogin, {
+        username: username,
+        password: password,
+      });
+      token = response.data;
+    } catch (error) {
+      console.log(error);
+    } finally {
+      return token;
+    }
   }
 }
 
-export default Server
+export default Server;
