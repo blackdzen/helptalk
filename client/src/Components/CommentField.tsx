@@ -1,26 +1,34 @@
 import React from "react";
 import ICommentField from "../Interfaces/ICommentField";
 
-function CommentField({ rows, cols, id, placeholder, title, value, setValue, isFocus }: ICommentField) {
-  const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => setValue(event.target.value)
+function CommentField({
+  rows,
+  cols,
+  id,
+  placeholder,
+  title,
+  value,
+  setValue,
+  isFocus,
+}: ICommentField) {
+  const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) =>
+    setValue(event.target.value);
 
   const onFocus = () => {
     if (isFocus) {
-      isFocus(true)
+      isFocus(true);
     }
-  }
+  };
 
   const onBlur = () => {
     if (isFocus) {
-      isFocus(false)
+      isFocus(false);
     }
-  }
+  };
 
   return (
     <div className="relative cursor-pointer">
-      <p
-        className="pb-3 pl-3"
-      >{title}</p>
+      <p className="pb-3 pl-3 font-JetBrains">{title}</p>
       <textarea
         className="
         duration-300
@@ -46,7 +54,7 @@ function CommentField({ rows, cols, id, placeholder, title, value, setValue, isF
         onBlur={onBlur}
       ></textarea>
     </div>
-  )
+  );
 }
 
-export default CommentField
+export default CommentField;

@@ -1,5 +1,6 @@
 interface IInfoMessage {
-  text: string
+  text: string;
+  isMessageOpen: boolean;
 }
 
-export default IInfoMessage
+export default IInfoMessage;
