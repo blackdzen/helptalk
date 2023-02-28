@@ -34,7 +34,7 @@ function OptinonsPanel({
   const departureRef = useRef(null);
 
   return (
-    <div>
+    <div className="min-w-[650px]">
       <CSSTransition
         nodeRef={closeRef}
         in={isCloseOpen}

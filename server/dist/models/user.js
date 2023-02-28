@@ -3,8 +3,14 @@ const userSchema = new mongoose.Schema({
     username: String,
     name: String,
     passwordHash: String,
+    patterns: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Pattern",
+        },
+    ],
 });
-userSchema.set('toJSON', {
+userSchema.set("toJSON", {
     transform(doc, ret) {
         ret.id = ret._id.toString();
         delete ret._id;
@@ -12,4 +18,4 @@ userSchema.set('toJSON', {
         delete ret.__v;
     },
 });
-export default mongoose.model('User', userSchema);
+export default mongoose.model("User", userSchema);

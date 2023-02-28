@@ -30,7 +30,7 @@ function Button({
         ${hoverBorderColor ? hoverBorderColor : "hover:border-blue"}
         ${hoverTextColor ? hoverTextColor : "hover:rich-black"}
         ${hoverBgColor ? hoverBgColor : "hover:bg-white"}
-        ${focusBorderColor ? focusBorderColor : "focus:border-blue"}
+        ${focusBorderColor ? focusBorderColor : "focus:border-grey"}
         ${focusTextColor ? focusTextColor : "focus:rich-black"}
         ${focusBgColor ? focusBgColor : "focus:bg-white"}
         rounded-md

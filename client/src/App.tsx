@@ -186,7 +186,7 @@ function App() {
             isOrganize={isOrganize}
             setIsOrganize={setIsOrganize}
           />
-          <PatternsPanel isPatternsOpen={isPatternsOpen} />
+          <PatternsPanel isPatternsOpen={isPatternsOpen} server={server} />
         </div>
       </CSSTransition>
     </div>

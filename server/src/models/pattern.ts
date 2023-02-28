@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const patternSchema = new mongoose.Schema({
   patternType: String,
-  patternBody: String,
+  patternContent: String,
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

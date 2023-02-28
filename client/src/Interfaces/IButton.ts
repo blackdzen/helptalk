@@ -1,7 +1,9 @@
+import React from "react";
+
 interface IButton {
   id: string;
   label: string;
-  onClick: () => void;
+  onClick: (event: React.MouseEvent) => void;
   bgColor?: string;
   borderColor?: string;
   textColor?: string;

@@ -22,7 +22,7 @@ function CommentPanel({
   clearButtonClick,
 }: ICommentPanel) {
   return (
-    <div className="flex flex-col gap-6 w-[500px] mt-6 relative pl-8">
+    <div className="flex flex-col gap-6 min-w-[500px] mt-6 relative pl-8">
       <RiNumber1
         className={`${isSubjectFocused ? "bg-blue text-white" : ""
           } rounded-full border-2 border-blue p-2 box-content absolute -top-1 left-0 duration-200`}

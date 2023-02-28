@@ -12,6 +12,10 @@ function Login({ isLoginOpen, server, setIsLoginOpen, setIsFormOpen }: ILogin) {
   //This is a state to controls the visibility of error message if authorization failed.
   const [isAuthErrOpen, setIsAuthErrOpen] = useState<boolean>(false);
 
+  //Node references for CSSTransition components
+  const loginRef = useRef(null);
+  const authErrRef = useRef(null);
+
   const usernameOnChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setUsername(event.target.value);
   const passwordOnChange = (event: React.ChangeEvent<HTMLInputElement>) =>
@@ -28,11 +32,21 @@ function Login({ isLoginOpen, server, setIsLoginOpen, setIsFormOpen }: ILogin) {
       setIsLoginOpen(false);
       setIsFormOpen(true);
     } else {
-      setIsAuthErrOpen(true);
+      if (isAuthErrOpen) {
+        setIsAuthErrOpen(false);
+        setTimeout(() => {
+          setIsAuthErrOpen(true);
+        }, 300);
+      } else {
+        setIsAuthErrOpen(true);
+      }
     }
   };
 
-  const loginRef = useRef(null);
+  // The function checks  keyup events in login inputs.
+  const enterKeyHandler = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter") return onClickLoginButton();
+  };
 
   return (
     <CSSTransition
@@ -48,13 +62,22 @@ function Login({ isLoginOpen, server, setIsLoginOpen, setIsFormOpen }: ILogin) {
       >
         <div className=" py-8 px-4 shadow-2xl bg-rich-black/20 w-[350px] rounded-md border border-grey flex flex-col gap-8">
           <div>
-            <div className="text-3xl  text-rich-black flex flex-col gap-3 justify-center">
-              <div className="text-center">Login</div>
-              {isAuthErrOpen && (
-                <div className="text-dark-orchid text-sm text-center">
+            <div className="text-3xl  text-rich-black flex flex-col gap-3 justify-center relative">
+              <div className="text-center mb-5">Login</div>
+              <CSSTransition
+                nodeRef={authErrRef}
+                in={isAuthErrOpen}
+                timeout={300}
+                unmountOnExit
+                classNames="component-transition"
+              >
+                <div
+                  ref={authErrRef}
+                  className="text-dark-orchid text-sm text-center absolute top-12 left-8"
+                >
                   Invalid username or password
                 </div>
-              )}
+              </CSSTransition>
             </div>
           </div>
           <div className="relative shadow-2xl">
@@ -65,6 +88,7 @@ function Login({ isLoginOpen, server, setIsLoginOpen, setIsFormOpen }: ILogin) {
               value={username}
               onChange={usernameOnChange}
               autoFocus={true}
+              onKeyUp={enterKeyHandler}
             />
             <IoIosContact className="absolute top-[11px] left-2" size={25} />
           </div>
@@ -76,6 +100,7 @@ function Login({ isLoginOpen, server, setIsLoginOpen, setIsFormOpen }: ILogin) {
               required={true}
               value={password}
               onChange={passwordOnChange}
+              onKeyUp={enterKeyHandler}
             />
             <IoIosKey className="absolute top-[11px] left-2" size={25} />
           </div>

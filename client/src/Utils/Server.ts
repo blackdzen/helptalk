@@ -23,6 +23,20 @@ class Server implements IServer {
       return token;
     }
   }
+
+  async postPattern(token: string) {
+    const apiPatterns = `${this.link}/api/patterns`;
+    try {
+      const response = await axios.post(apiPatterns, {
+        token: token,
+        // patternType: "voip",
+        // patternContent: "Third pattern test",
+      });
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default Server;
