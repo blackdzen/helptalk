@@ -2,8 +2,6 @@ import React from "react";
 import ICommentField from "../Interfaces/ICommentField";
 
 function CommentField({
-  rows,
-  cols,
   id,
   placeholder,
   title,
@@ -44,8 +42,6 @@ function CommentField({
         focus:border-blue
         font-JetBrains
         "
-        // rows={rows}
-        // cols={cols}
         id={id}
         placeholder={placeholder}
         value={value}

@@ -28,8 +28,6 @@ function CommentPanel({
           } rounded-full border-2 border-blue p-2 box-content absolute -top-1 left-0 duration-200`}
       />
       <CommentField
-        rows={2}
-        cols={70}
         id="subject"
         placeholder="Введите тему обращения..."
         title="Тема обращения:"
@@ -42,8 +40,6 @@ function CommentPanel({
           } rounded-full border-2 border-blue p-2 box-content absolute top-[255px] left-0`}
       />
       <CommentField
-        rows={10}
-        cols={50}
         id="operator"
         placeholder="Введите комментарий..."
         title="Комментарий специалиста:"
