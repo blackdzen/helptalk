@@ -14,11 +14,10 @@ import jwt from "jsonwebtoken";
 import logger from "../utils/logger.js";
 const patternsRouter = express.Router();
 //The function gets a token from the request and returns user data, as a username and a user id, if the verification passed, or null if not.
-function tokenVerification(request) {
+function tokenVerification(authorizationHeader) {
     let decodedToken = null;
     try {
-        const { token } = request.body;
-        decodedToken = jwt.verify(token, process.env.PASS);
+        decodedToken = jwt.verify(authorizationHeader, process.env.PASS);
     }
     catch (error) {
         console.log(error);
@@ -27,11 +26,47 @@ function tokenVerification(request) {
         return decodedToken;
     }
 }
+patternsRouter.delete("/", (request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    logger.info("Request. patternsRouter. Delete", request.body.id);
+    try {
+        const userID = tokenVerification(request.headers.authorization)
+            ? tokenVerification(request.headers.authorization).id
+            : null;
+        if (!userID)
+            return response.status(401).json({ message: "Invalid token" });
+        const deleteResult = yield Pattern.findByIdAndDelete(request.body.id);
+        return deleteResult
+            ? response.status(204).end()
+            : response.status(404).json({
+                message: `The pattern have not found by id: ${request.body.id}`,
+            });
+    }
+    catch (error) {
+        console.log(error);
+    }
+}));
+patternsRouter.get("/", (request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userID = tokenVerification(request.headers.authorization)
+            ? tokenVerification(request.headers.authorization).id
+            : null;
+        if (!userID)
+            return response.status(401).json({ message: "Invalid token" });
+        const patternsResponse = yield Pattern.find({ user: userID });
+        if (patternsResponse.length === 0)
+            return response.status(404).json({ message: "No patterns found" });
+        const userPatterns = patternsResponse.map((pattern) => pattern.toJSON());
+        return response.status(200).json(userPatterns);
+    }
+    catch (error) {
+        console.log(error);
+    }
+}));
 patternsRouter.post("/", (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         logger.info("From: patternsRouter.post", request.body);
-        const userID = tokenVerification(request)
-            ? tokenVerification(request).id
+        const userID = tokenVerification(request.headers.authorization)
+            ? tokenVerification(request.headers.authorization).id
             : null;
         if (!userID)
             return response.status(401).json({ message: "Invalid token" });
@@ -53,9 +88,7 @@ patternsRouter.post("/", (request, response) => __awaiter(void 0, void 0, void 0
             const savedPattern = yield newPattern.save();
             user.patterns = user.patterns.concat(savedPattern.id);
             yield user.save();
-            return response
-                .status(201)
-                .json({
+            return response.status(201).json({
                 message: "Pattern has been successfully added.",
                 savedPattern: savedPattern,
             });

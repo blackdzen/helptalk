@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Option from "./Option";
 import IRadioGroup from "../Interfaces/IRadioGroup";
 
@@ -8,6 +8,8 @@ function RadioGroup({ options, onChange, value, labelText }: IRadioGroup) {
     setSelectedIndex(index);
     onChange && onChange(options[index]);
   }
+
+  useEffect(() => setSelectedIndex(undefined), [labelText]);
 
   return (
     <div>

@@ -4,8 +4,11 @@ import { BiMessageAltAdd } from "react-icons/bi";
 import Button from "../Components/Button";
 import CommentField from "../Components/CommentField";
 import RadioGroup from "../Components/RadioGroup";
+import Pattern from "../Components/Pattern";
 import IAuthData from "../Interfaces/IAuthData";
 import IPatternsPanel from "../Interfaces/IPatternsPanel";
+import userPattern from "../Types/userPattern";
+import { serialize } from "v8";
 
 function PatternsPanel({ isPatternsOpen, server }: IPatternsPanel) {
   //Node references for CSSTransition components
@@ -25,37 +28,119 @@ function PatternsPanel({ isPatternsOpen, server }: IPatternsPanel) {
   const [patternContent, setPatternContent] = useState<string>("");
   const [patternType, setPatternType] = useState<string>("");
 
+  // These are states for keeping general and filtered pattern lists.
+  const [patternsList, setPatternsList] = useState<userPattern[] | null>(null);
+  const [filteredPatterns, setFilteredPatterns] = useState<
+    userPattern[] | null
+  >(null);
+
+  //The function gets from the localStorage a helpTalkAuthData item and returns it. If the item not found, the function throws error
+  const getAuthData = (): IAuthData => {
+    const item = localStorage.getItem("helpTalkAuthData");
+    if (item) {
+      const authData: IAuthData = JSON.parse(item);
+      return authData;
+    } else {
+      throw new Error(
+        "The helpTalkAuthData item not found in the localStorage"
+      );
+    }
+  };
+
+  // The function collects and sends data for a new pattern, also adds new pattern to the patternList.
   const addPatern = async () => {
-    const data = localStorage.getItem("helpTalkAuthData");
-    if (data) {
-      const authData: IAuthData = JSON.parse(data);
+    const authData = getAuthData();
+    if (authData) {
       const response = await server.postPattern(
         authData.token,
         patternType,
         patternContent
       );
+      if (response.savedPattern) {
+        const pattern = response.savedPattern as userPattern;
+        setPatternsList(
+          patternsList ? patternsList.concat(pattern) : new Array(pattern)
+        );
+      }
     }
     closeNewPattern();
   };
 
+  //The function gets user patterns from the server and sets them to the patternsList state.
+  const getPatterns = async () => {
+    try {
+      const authData = getAuthData();
+      if (authData) {
+        const response = await server.getPatterns(authData.token);
+        if (response) {
+          setPatternsList(response);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //The function describes behavior of the button Закрыть.
   const closeNewPattern = () => {
     setIsNewPatternOpen(false);
     setPatternContent("");
     setPatternType("");
+    setFilteredPatterns(null);
     setTimeout(() => {
       setIsPatternListOpen(true);
     }, 600);
   };
 
+  //The function describes behavior of the icon '+'
   const openNewPattern = () => {
     setIsNewPatternOpen(true);
     setIsPatternListOpen(false);
     setPatternType("");
   };
 
+  //The fuction takes an argument and sets a filteredPatterns state.
+  const pickPatterns = (type: string, patterns: userPattern[]): void => {
+    const newPatternList: userPattern[] | null = type
+      ? patterns.filter((pattern) => pattern.patternType === type)
+      : null;
+    setFilteredPatterns(newPatternList);
+  };
+
+  const onChangePatternsRadioGroup = (type: string) => {
+    setPatternType(type);
+    if (patternsList) pickPatterns(type, patternsList);
+  };
+
+  //The function deletes a selected pattern by id.
+  const deletePattern = async (event: React.MouseEvent) => {
+    const element = event.target as HTMLElement;
+    const deleteIcon = element.closest(".deleteIcon") as HTMLElement;
+    const authData = getAuthData();
+    if (authData.token) {
+      const response = await server.deletePattern(
+        authData.token,
+        deleteIcon.id
+      );
+      if (response.status === 204 && patternsList && filteredPatterns) {
+        setPatternsList(
+          patternsList.filter((pattern) => pattern.id !== deleteIcon.id)
+        );
+        setFilteredPatterns(
+          filteredPatterns.filter((pattern) => pattern.id !== deleteIcon.id)
+        );
+      }
+    }
+  };
+
   useEffect(() => {
     setPatternType("");
+    closeNewPattern();
   }, [isPatternsOpen]);
+
+  useEffect(() => {
+    getPatterns();
+  }, []);
 
   return (
     <CSSTransition
@@ -67,8 +152,32 @@ function PatternsPanel({ isPatternsOpen, server }: IPatternsPanel) {
     >
       <div
         ref={patternsRef}
-        className="p-4 justify-self-end border-l border-l-dark-grey h-screen overflow-y-scroll flex flex-1 flex-col relative"
+        className="p-4 justify-self-end border-l border-l-dark-grey h-screen overflow-y-scroll flex flex-1 flex-col relative gap-4"
       >
+        <RadioGroup
+          onChange={(selectedOption) =>
+            onChangePatternsRadioGroup(selectedOption.props.id)
+          }
+          labelText={`${isPatternListOpen
+              ? "Выберите шаблоны из списка:"
+              : "Выберите тип будущего шаблона:"
+            }`}
+          options={[
+            <div id="common" className="flex flex-1 justify-around">
+              <span>Тема</span>
+            </div>,
+            <div id="internet" className="flex flex-1 justify-around">
+              <span>Internet</span>
+            </div>,
+            <div id="iptv" className="flex flex-1 justify-around">
+              <span>IPTV</span>
+            </div>,
+            <div id="voip" className="flex flex-1 justify-around">
+              <span>VoIp</span>
+            </div>,
+          ]}
+        />
+
         <CSSTransition
           in={isPatternListOpen}
           timeout={300}
@@ -76,28 +185,19 @@ function PatternsPanel({ isPatternsOpen, server }: IPatternsPanel) {
           classNames="component-transition"
         >
           <div ref={patternListRef}>
-            <RadioGroup
-              onChange={(selectedOption) =>
-                setPatternType(selectedOption.props.id)
-              }
-              options={[
-                <div id="common" className="flex flex-1 justify-around">
-                  <span>Общее</span>
-                </div>,
-                <div id="internet" className="flex flex-1 justify-around">
-                  <span>Internet</span>
-                </div>,
-                <div id="iptv" className="flex flex-1 justify-around">
-                  <span>IPTV</span>
-                </div>,
-                <div id="voip" className="flex flex-1 justify-around">
-                  <span>VoIp</span>
-                </div>,
-              ]}
-            />
-
+            <div className="flex flex-col gap-4">
+              {filteredPatterns?.map((pattern) => (
+                <Pattern
+                  key={pattern.id}
+                  patternID={pattern.id}
+                  patternContent={pattern.patternContent}
+                  onClick={deletePattern}
+                />
+              ))}
+            </div>
             <BiMessageAltAdd
-              className="absolute bottom-4 right-4 w-12 h-12 text-blue hover:text-dark-orchid transition duration-300 active:text-blue"
+              className="fixed bottom-4 right-4 w-12 h-12 text-blue hover:text-corn transition duration-300
+              active:text-blue"
               onClick={openNewPattern}
             />
           </div>
@@ -108,42 +208,24 @@ function PatternsPanel({ isPatternsOpen, server }: IPatternsPanel) {
           unmountOnExit
           classNames="component-transition "
         >
-          <div className="px-2 flex flex-col gap-2" ref={newPatternRef}>
-            <RadioGroup
-              onChange={(selectedOption) =>
-                setPatternType(selectedOption.props.id)
-              }
-              labelText="Установите тип шаблона:"
-              options={[
-                <div id="common" className="flex flex-1 justify-around">
-                  <span>Общее</span>
-                </div>,
-                <div id="internet" className="flex flex-1 justify-around">
-                  <span>Internet</span>
-                </div>,
-                <div id="iptv" className="flex flex-1 justify-around">
-                  <span>IPTV</span>
-                </div>,
-                <div id="voip" className="flex flex-1 justify-around">
-                  <span>VoIp</span>
-                </div>,
-              ]}
-            />
-            <CommentField
-              id="patternContent"
-              placeholder="Текст шаблона..."
-              title="Введите текст шаблона:"
-              value={patternContent}
-              setValue={setPatternContent}
-              isFocus={setIsPatternContentFocus}
-            />
-            <div className="flex justify-center gap-4">
-              <Button id="addPatern" label="Добавить" onClick={addPatern} />
-              <Button
-                id="closeNewPattern"
-                label="Закрыть"
-                onClick={closeNewPattern}
+          <div ref={newPatternRef}>
+            <div className="px-2 flex flex-col gap-2">
+              <CommentField
+                id="patternContent"
+                placeholder="Текст шаблона..."
+                title="Введите текст шаблона:"
+                value={patternContent}
+                setValue={setPatternContent}
+                isFocus={setIsPatternContentFocus}
               />
+              <div className="flex justify-center gap-4">
+                <Button id="addPatern" label="Добавить" onClick={addPatern} />
+                <Button
+                  id="closeNewPattern"
+                  label="Закрыть"
+                  onClick={closeNewPattern}
+                />
+              </div>
             </div>
           </div>
         </CSSTransition>

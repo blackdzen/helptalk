@@ -22,12 +22,13 @@ function Button({
         onClick={onClick}
         className={`
         w-[150px]
-        shadow-xl
+        hover:shadow-xl
+        active:shadow-md
         border-2
         ${borderColor ? borderColor : "border-grey"}
         ${bgColor ? bgColor : "bg-white"}
         ${textColor ? textColor : "text-rich-black"}
-        ${hoverBorderColor ? hoverBorderColor : "hover:border-blue"}
+        ${hoverBorderColor ? hoverBorderColor : "hover:border-grey"}
         ${hoverTextColor ? hoverTextColor : "hover:rich-black"}
         ${hoverBgColor ? hoverBgColor : "hover:bg-white"}
         ${focusBorderColor ? focusBorderColor : "focus:border-grey"}

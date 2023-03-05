@@ -23,7 +23,7 @@ function Login({ isLoginOpen, server, setIsLoginOpen, setIsFormOpen }: ILogin) {
 
   //The function sends username and password after user pressed the login button and gets json web token or null.
   const onClickLoginButton = async () => {
-    const response = await server.login(username, password);
+    const response = await server.login(username.trim(), password.trim());
     if (response) {
       localStorage.setItem("helpTalkAuthData", JSON.stringify(response));
       setUsername("");
