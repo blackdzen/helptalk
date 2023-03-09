@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import IServer from "../Interfaces/IServer";
 
 class Server implements IServer {
@@ -41,9 +41,14 @@ class Server implements IServer {
           headers: { Authorization: token },
         }
       );
-      return response.data;
+      return { status: response.status, data: response.data };
     } catch (error) {
-      console.log(error);
+      const serverError = error as AxiosError;
+      console.log(serverError.response?.data);
+      return {
+        status: serverError.response?.status,
+        data: serverError.response?.data,
+      };
     }
   }
 
@@ -62,12 +67,18 @@ class Server implements IServer {
   async deletePattern(token: string, id: string): Promise<any> {
     const apiPatterns = `${this.link}/api/patterns`;
     try {
-      return axios.delete(apiPatterns, {
+      const response = await axios.delete(apiPatterns, {
         headers: { Authorization: token },
         data: { id: id },
       });
+      return { status: response.status, data: response.data };
     } catch (error) {
-      console.log(error);
+      const serverError = error as AxiosError;
+      console.log(serverError.response?.data);
+      return {
+        status: serverError.response?.status,
+        data: serverError.response?.data,
+      };
     }
   }
 }

@@ -7,4 +7,5 @@ export default interface ICommentField {
   value: string;
   setValue: React.Dispatch<SetStateAction<string>>;
   isFocus?: React.Dispatch<SetStateAction<boolean>>;
+  height?: string;
 }

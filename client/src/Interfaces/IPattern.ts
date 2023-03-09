@@ -1,7 +1,9 @@
+import React, { SetStateAction } from "react";
 interface IPattern {
   patternContent: string;
   patternID: string;
-  onClick: (event: React.MouseEvent) => void;
+  onClickDeleteIcon: (event: React.MouseEvent) => void;
+  onClickPattern: (event: React.MouseEvent) => void;
 }
 
 export default IPattern;

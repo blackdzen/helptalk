@@ -32,7 +32,7 @@ loginRouter.post("/", (request, response) => __awaiter(void 0, void 0, void 0, f
                 id: user.id,
             };
             const token = jwt.sign(tokenData, process.env.PASS, {
-                expiresIn: 60 * 60,
+                expiresIn: 720 * 60,
             });
             return response.status(200).send({
                 token,

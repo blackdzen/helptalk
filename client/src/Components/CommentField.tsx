@@ -8,6 +8,7 @@ function CommentField({
   value,
   setValue,
   isFocus,
+  height,
 }: ICommentField) {
   const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) =>
     setValue(event.target.value);
@@ -28,20 +29,21 @@ function CommentField({
     <div className="relative cursor-pointer">
       <p className="pb-3 pl-3 font-JetBrains">{title}</p>
       <textarea
-        className="
+        className={`
         duration-300
         focus:placeholder:opacity-30
         shadow-xl
         rounded-md
         outline-none
         w-full
-        h-[200px]
         p-4
         border-2
         border-grey
         focus:border-blue
         font-JetBrains
-        "
+        ${height ? height : "h-[100px]"}
+        resize-none
+        `}
         id={id}
         placeholder={placeholder}
         value={value}

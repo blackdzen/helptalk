@@ -41,12 +41,12 @@ function App() {
 
   // These are the states that store data for the future comment for Argus:
   const [operatorComment, setOperatorComment] = useState<string>("");
+  const [requestSubject, setRequestSubject] = useState<string>("");
 
   const [sels, setSels] = useState<string>("");
   const [call, setCall] = useState<string>("");
   const [organize, setOrganize] = useState<string>("");
 
-  const [requestSubject, setRequestSubject] = useState<string>("");
   const [mainDevice, setMainDevice] = useState<string>("");
   const [stb, setStb] = useState<string>("");
   const [optionalService, setOptionalService] = useState<string>("");
@@ -186,7 +186,16 @@ function App() {
             isOrganize={isOrganize}
             setIsOrganize={setIsOrganize}
           />
-          <PatternsPanel isPatternsOpen={isPatternsOpen} server={server} />
+          <PatternsPanel
+            isPatternsOpen={isPatternsOpen}
+            server={server}
+            operatorComment={operatorComment}
+            setOperatorComment={setOperatorComment}
+            requestSubject={requestSubject}
+            setRequestSubject={setRequestSubject}
+            setIsFormOpen={setIsFormOpen}
+            setIsLoginOpen={setIsLoginOpen}
+          />
         </div>
       </CSSTransition>
     </div>

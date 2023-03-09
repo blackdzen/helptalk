@@ -8,9 +8,17 @@ import Pattern from "../Components/Pattern";
 import IAuthData from "../Interfaces/IAuthData";
 import IPatternsPanel from "../Interfaces/IPatternsPanel";
 import userPattern from "../Types/userPattern";
-import { serialize } from "v8";
+import serverResponse from "../Types/serverResponse";
 
-function PatternsPanel({ isPatternsOpen, server }: IPatternsPanel) {
+function PatternsPanel({
+  isPatternsOpen,
+  server,
+  operatorComment,
+  setOperatorComment,
+  setRequestSubject,
+  setIsLoginOpen,
+  setIsFormOpen,
+}: IPatternsPanel) {
   //Node references for CSSTransition components
   const patternsRef = useRef(null);
   const newPatternRef = useRef(null);
@@ -49,21 +57,56 @@ function PatternsPanel({ isPatternsOpen, server }: IPatternsPanel) {
 
   // The function collects and sends data for a new pattern, also adds new pattern to the patternList.
   const addPatern = async () => {
-    const authData = getAuthData();
-    if (authData) {
-      const response = await server.postPattern(
-        authData.token,
-        patternType,
-        patternContent
-      );
-      if (response.savedPattern) {
-        const pattern = response.savedPattern as userPattern;
-        setPatternsList(
-          patternsList ? patternsList.concat(pattern) : new Array(pattern)
+    try {
+      const authData = getAuthData();
+      if (authData) {
+        const response: serverResponse = await server.postPattern(
+          authData.token,
+          patternType,
+          patternContent
         );
+        if (response.data.savedPattern) {
+          const pattern = response.data.savedPattern as userPattern;
+          setPatternsList(
+            patternsList ? patternsList.concat(pattern) : new Array(pattern)
+          );
+          closeNewPattern();
+        } else if (response.status === 401) {
+          setIsFormOpen(false);
+          setIsLoginOpen(true);
+        }
       }
+    } catch (error) {
+      console.log(error);
     }
-    closeNewPattern();
+  };
+
+  //The function deletes a selected pattern by id.
+  const deletePattern = async (event: React.MouseEvent) => {
+    const element = event.target as HTMLElement;
+    const deleteIcon = element.closest(".deleteIcon") as HTMLElement;
+    try {
+      const authData = getAuthData();
+      if (authData.token) {
+        const response: serverResponse = await server.deletePattern(
+          authData.token,
+          deleteIcon.id
+        );
+        if (response.status === 204 && patternsList && filteredPatterns) {
+          setPatternsList(
+            patternsList.filter((pattern) => pattern.id !== deleteIcon.id)
+          );
+          setFilteredPatterns(
+            filteredPatterns.filter((pattern) => pattern.id !== deleteIcon.id)
+          );
+        } else if (response.status === 401) {
+          setIsFormOpen(false);
+          setIsLoginOpen(true);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   //The function gets user patterns from the server and sets them to the patternsList state.
@@ -112,24 +155,14 @@ function PatternsPanel({ isPatternsOpen, server }: IPatternsPanel) {
     if (patternsList) pickPatterns(type, patternsList);
   };
 
-  //The function deletes a selected pattern by id.
-  const deletePattern = async (event: React.MouseEvent) => {
-    const element = event.target as HTMLElement;
-    const deleteIcon = element.closest(".deleteIcon") as HTMLElement;
-    const authData = getAuthData();
-    if (authData.token) {
-      const response = await server.deletePattern(
-        authData.token,
-        deleteIcon.id
-      );
-      if (response.status === 204 && patternsList && filteredPatterns) {
-        setPatternsList(
-          patternsList.filter((pattern) => pattern.id !== deleteIcon.id)
-        );
-        setFilteredPatterns(
-          filteredPatterns.filter((pattern) => pattern.id !== deleteIcon.id)
-        );
-      }
+  //The function adds a pattern to the CommentField.
+  const addToComment = (event: React.MouseEvent) => {
+    const el = event.target as HTMLDivElement;
+    const patternContent = " " + el.textContent;
+    if (patternType === "common") {
+      setRequestSubject(patternContent);
+    } else {
+      setOperatorComment(operatorComment + patternContent);
     }
   };
 
@@ -191,7 +224,8 @@ function PatternsPanel({ isPatternsOpen, server }: IPatternsPanel) {
                   key={pattern.id}
                   patternID={pattern.id}
                   patternContent={pattern.patternContent}
-                  onClick={deletePattern}
+                  onClickPattern={addToComment}
+                  onClickDeleteIcon={deletePattern}
                 />
               ))}
             </div>
